@@ -46,6 +46,16 @@ dependencies:
   rxdart: ^0.27.2
   google_fonts: ^2.3.1
 
+  flutter_launcher_icons: ^0.9.2
+
+flutter_icons:
+  image_path: "assets/images/todoicon.jpg"
+  android: true
+  ios: true
+  remove_alpha_ios: true
+
+
+
 
 
 dev_dependencies:

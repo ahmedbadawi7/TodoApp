@@ -68,9 +68,18 @@ late NotifyHelper notifyHelper;
             },),
         elevation: 0,
         backgroundColor:context.theme.backgroundColor,
-      actions: const [
-        CircleAvatar(backgroundImage: AssetImage('assets/images/person.jpeg'),radius: 18,),
-        SizedBox(width: 20,)
+      actions:  [
+      IconButton(icon: Icon(
+        Icons.cleaning_services_outlined,
+        size: 20,
+        color: Get.isDarkMode ? Colors.white : darkGreyClr,
+      ),
+        onPressed: () {
+        notifyHelper.cancelAllNotification();
+              _taskController.deleteAllTasks();
+            }),
+       const CircleAvatar(backgroundImage: AssetImage('assets/images/person.jpeg'),radius: 18,),
+       const SizedBox(width: 20,)
       ],
     );
   }
@@ -157,15 +166,17 @@ late NotifyHelper notifyHelper;
                   Orientation.landscape ? Axis.horizontal : Axis.vertical,
               itemBuilder: (BuildContext context, int index) {
                 var task = _taskController.tasklist[index];
-              if(task.repeat == 'Daily'||task.date == DateFormat.yMd().format(_selectedDate)){
-                var hour = task.startTime.toString().split(':')[0];
-                var minutes = task.startTime.toString().split(':')[1];
-                debugPrint('my time is $hour');
-                debugPrint('my minute is $minutes');
-
+              if(task.repeat == 'Daily'||
+                  task.date ==  DateFormat.yMd().format(_selectedDate)||
+                  (task.repeat == 'weekly' && _selectedDate.difference(DateFormat.yMd().parse(task.date!)).inDays %7==0 )||
+                  (task.repeat == 'Monthly'&& DateFormat.yMd().parse(task.date!).day == _selectedDate.day)
+              )  {
+                // var hour = task.startTime.toString().split(':')[0];
+                // var minutes = task.startTime.toString().split(':')[1];
+                // debugPrint('my time is $hour');
+                // debugPrint('my minute is $minutes');
                 var date = DateFormat.jm().parse(task.startTime!);
                 var myTime = DateFormat('HH:mm').format(date);
-
                 notifyHelper.scheduledNotification
                   (int.parse(myTime.toString().split(':')[0]),
                     int.parse(myTime.toString().split(':')[1]),
@@ -186,12 +197,9 @@ late NotifyHelper notifyHelper;
                     ),
                   ),
                 );
-              }else{
+
+              }else
                 return Container();
-              }
-
-
-
               },
               itemCount: _taskController.tasklist.length,
             ),
@@ -273,14 +281,16 @@ late NotifyHelper notifyHelper;
               task.isCompleted == 1 ?
                Container():
               _buildBotoomSheet(label:'Task Completed',onTap: (){
+                notifyHelper.cancelNotification(task);
                  _taskController.makeTaskCompleted(task.id!);
                  Get.back();
               },
                   clr: primaryClr),
               _buildBotoomSheet(label:'Delete Task',onTap: (){
+                notifyHelper.cancelNotification(task);
                 _taskController.deleteTask(task);
                 Get.back();
-              },clr: primaryClr),
+              },clr: Colors.red[300]!),
               Divider(color:Get.isDarkMode? Colors.grey:darkGreyClr ,),
               _buildBotoomSheet(label:'Cancel Completed',onTap: (){
                 Get.back();

@@ -16,7 +16,7 @@ class AddTaskPage extends StatefulWidget {
 
 class _AddTaskPageState extends State<AddTaskPage> {
   final TaskController _taskController = Get.put(TaskController());
-  final DateTime _selectedDate = DateTime.now();
+   DateTime _selectedDate = DateTime.now();
    String _startTime = DateFormat('hh:mm a')
       .format(DateTime.now())
       .toString();
@@ -24,7 +24,7 @@ class _AddTaskPageState extends State<AddTaskPage> {
       DateTime.now().add(const Duration(minutes: 15))).toString();
   int _SelectRemine = 5;
   List<int> remindList = [5, 10, 15, 20];
-  final String _SelectRepeat = 'None';
+  String _SelectRepeat = 'None';
   List<String> repedList = ['None', 'Daily', 'weekly', 'Monthly'];
   int SelectedColor = 0;
 
@@ -46,9 +46,8 @@ class _AddTaskPageState extends State<AddTaskPage> {
               editingController: _taskController.noteController,),
             CustomTextFromFiled(title: 'Date',
               textFieldHint: DateFormat.yMd().format(_selectedDate),
-              widget: IconButton(onPressed: () {
-                getDateFromUser();
-              },
+              widget: IconButton(onPressed: () =>
+                _getDateFromUser(),
                 icon: const Icon(
                   Icons.calendar_today_outlined, color: Colors.grey,),),),
             Row(children: [
@@ -81,10 +80,37 @@ class _AddTaskPageState extends State<AddTaskPage> {
                           _SelectRemine = int.parse(newValue!);
                         });
                       },
-                      items: repedList.map<DropdownMenuItem<String>>((
-                           value) =>
+                      items: remindList.map<DropdownMenuItem<String>>((int
+                           e) =>
                           DropdownMenuItem<String>(
-                            value: value.toString(),
+                            value: e.toString(),
+                            child: Text('$e',
+                              style: const TextStyle(color: Colors.white),
+                            ),
+                          )
+                      ).toList()),
+                  const SizedBox(width: 6,)
+                ],
+              ),
+            ),
+
+            CustomTextFromFiled(
+              title: 'Repeat',
+              textFieldHint: _SelectRepeat,
+              widget: Row(
+                children: [
+                  DropdownButton(
+                      dropdownColor: Colors.blueGrey,
+                      borderRadius: BorderRadius.circular(10),
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          _SelectRepeat = newValue!;
+                        });
+                      },
+                      items: repedList.map<DropdownMenuItem<String>>((String
+                          value) =>
+                          DropdownMenuItem<String>(
+                            value: value,
                             child: Text(value,
                               style: const TextStyle(color: Colors.white),
                             ),
@@ -94,8 +120,7 @@ class _AddTaskPageState extends State<AddTaskPage> {
                 ],
               ),
             ),
-            
-            
+
             const SizedBox(height: 18,),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -116,6 +141,7 @@ class _AddTaskPageState extends State<AddTaskPage> {
 
   Column _colorPalette() {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text('Color', style: titleStyle,),
         const SizedBox(height: 8,),
@@ -190,13 +216,13 @@ class _AddTaskPageState extends State<AddTaskPage> {
     }
   }
 
-   getDateFromUser() async {
+   _getDateFromUser() async {
     DateTime? _pickedDate = await showDatePicker(context: context,
         initialDate: _selectedDate,
         firstDate: DateTime(2015),
         lastDate: DateTime(2030));
     if(_pickedDate != null) {
-      setState(() => _selectedDate == _pickedDate);
+      setState(() => _selectedDate = _pickedDate);
     } else {
       print('object');
     }

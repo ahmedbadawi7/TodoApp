@@ -11,6 +11,7 @@ class TaskController extends GetxController {
 
   addTask(Task task)async{
     await DBHelper.instance.insert(task);
+    print(DBHelper.instance.insert(task));
   }
 
  Future<void> getTask()async{
@@ -20,10 +21,18 @@ class TaskController extends GetxController {
      Task.fromJson(data)).toList());
  // print(tasklist);
  }
+
  void deleteTask(Task task)async{
    await DBHelper.delete(task);
  getTask();
  }
+ void deleteAllTasks() async{
+   await DBHelper.deleteAll();
+   getTask();
+
+ }
+
+
   void makeTaskCompleted(int id)async{
   await DBHelper.update(id);
  getTask();

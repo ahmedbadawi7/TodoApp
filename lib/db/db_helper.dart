@@ -48,6 +48,7 @@ class DBHelper {
     try{
       Database db = await instance._initiateDatabase();
       return await db.insert(_tableName, task!.toJson());
+
     }catch(e){
       print('we are here'+e.toString());
       return 90000;
@@ -58,13 +59,20 @@ class DBHelper {
     Database db = await instance._initiateDatabase();
     return await db.delete(_tableName,where:'id = ?',whereArgs: [task!.id]);
   }
+  static Future<int> deleteAll ()async{
+    print("deleted All");
+    Database db = await instance._initiateDatabase();
+    return await db.delete(_tableName);
+  }
+
   static Future<int> update (int id)async{
     print("update");
     Database db = await instance._initiateDatabase();
     return await db.rawUpdate('''
-    UPDATE tasks SET isCompleted = ? WHERE id = ?
+    UPDATE $_tableName SET isCompleted = ? WHERE id = ?
     ''',[1,id]);
   }
+
   static Future<List<Map<String, Object?>>> query() async{
     print("query");
     Database db = await instance._initiateDatabase();
